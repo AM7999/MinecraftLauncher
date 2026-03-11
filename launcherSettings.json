@@ -1,0 +1,35 @@
+{
+  "userSettings": {
+    "username": "testUsername",
+    "maxMemoryAlloc": 4096
+  },
+  "installedJdks": [
+    {
+      "name": "Adoptium JDK",
+      "jdkVersion": 17,
+      "pathToExec": "/path"
+    }
+  ],
+  "instances": [
+    {
+      "name": "minecraft",
+      "version": "snapshot-21w17a",
+      "javaVersion": 17,
+      "modded": {
+        "isModded": false,
+        "modLoader": null
+      },
+      "pathToInstance": "/path"
+    },
+    {
+      "name": "anotherMinecraft",
+      "version": "1.9",
+      "javaVersion": 8,
+      "modded": {
+        "isModded": true,
+        "modLoader": "neoforge"
+      },
+      "pathToInstance": "/path"
+    }
+  ]
+}

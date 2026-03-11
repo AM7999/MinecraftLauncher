@@ -1,0 +1,130 @@
+#ifndef STRUCTS_H
+#define STRUCTS_H
+
+#include <iostream>
+#include <string>
+#include <nlohmann/json.hpp>
+
+namespace Xenia {
+    enum ModLoader {
+        NONE,
+        FORGE,
+        FABRIC,
+        QUILT,
+        NEOFORGE
+      };
+
+    inline std::string ModLoaderToString(const ModLoader& ml) {
+        switch (ml) {
+            case Xenia::ModLoader::NONE:
+                return "none";
+            case Xenia::ModLoader::FORGE:
+                return "forge";
+            case Xenia::ModLoader::FABRIC:
+                return "fabric";
+            case Xenia::ModLoader::QUILT:
+                return "quilt";
+            case Xenia::ModLoader::NEOFORGE:
+                return "neoforge";
+        }
+
+        return "";
+    }
+
+    struct clientSettings {
+        std::string username;
+        bool online;
+        int memory;
+    };
+
+    struct JDK {
+        std::string vendor;
+        int javaVersion;
+        std::string path;
+    };
+
+    struct Instance {
+        std::string instanceName;
+        std::string minecraftVersion;
+        int javaVersion;
+        bool isModded;
+        ModLoader ml;
+        std::string pathToInstance;
+    };
+}
+
+// Serialization/Deserialization for Xenia::Instance
+namespace nlohmann {
+    template <>
+    struct adl_serializer<Xenia::JDK> {
+        static void to_json(json &j, Xenia::JDK &jdk) {
+            j = json{
+                {"name", jdk.vendor},
+                {"jdkVersion", jdk.javaVersion},
+                {"pathToExec", jdk.path},
+            };
+        }
+        static void from_json(const json &j, Xenia::JDK &jdk) {
+            try {
+                jdk.vendor = j.at("name").get<std::string>();
+                jdk.javaVersion = j.at("version").get<int>();
+                jdk.path = j.at("path").get<std::string>();
+            }
+            catch(std::exception &e) {
+                std::cout << e.what();
+            }
+        }
+    };
+
+    template <>
+    struct adl_serializer<Xenia::Instance> {
+        static void to_json(json &j, const Xenia::Instance &i) {
+            std::string modloaderString;
+            switch (i.ml) {
+                case Xenia::NONE: modloaderString = "none"; break;
+                case Xenia::FORGE: modloaderString = "forge"; break;
+                case Xenia::FABRIC: modloaderString = "fabric"; break;
+                case Xenia::QUILT: modloaderString = "quilt"; break;
+                case Xenia::NEOFORGE: modloaderString = "neoforge"; break;
+                default: modloaderString = nullptr; break;
+            }
+            j = json{
+                {"name", i.instanceName},
+                {"version", i.minecraftVersion},
+                {"javaVersion", i.javaVersion},
+                {"modded", {
+                    {"modded", i.isModded},
+                    {"modLoader", modloaderString}
+                }},
+                {"pathToInstance", i.pathToInstance},
+            };
+        }
+        static void from_json(const json &j, Xenia::Instance &i) {
+            try {
+                i.instanceName = j.at("name").get<std::string>();
+                i.minecraftVersion = j.at("version").get<std::string>();
+                i.javaVersion = j.at("javaVersion").get<int>();
+                i.pathToInstance = j.at("pathToInstance").get<std::string>();
+                auto modded = j.at("modded");
+                i.isModded = modded.at("isModded").get<bool>();
+
+                if (modded.at("modLoader").is_null()) {
+                    i.ml = Xenia::ModLoader::NONE;
+                } else {
+                    std::string loader = modded.at("modLoader").get<std::string>();
+                    if (loader == "forge") i.ml = Xenia::ModLoader::FORGE;
+                    if (loader == "fabric") i.ml = Xenia::ModLoader::FABRIC;
+                    if (loader == "quilt") i.ml = Xenia::ModLoader::QUILT;
+                    if (loader == "neoforge") i.ml = Xenia::ModLoader::NEOFORGE;
+                    else i.ml = Xenia::ModLoader::NONE;
+                }
+            }
+            catch (const std::exception &e) {
+                std::cerr << e.what() << '\n';
+            }
+        }
+    };
+}
+
+
+#endif
