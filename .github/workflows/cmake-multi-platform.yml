@@ -54,6 +54,10 @@ jobs:
           brew install nlohmann-json
           # SDL3
           brew install sdl3
+          # Export the Homebrew prefix so CMake can find SDL3/SDL.h via
+          # CMAKE_PREFIX_PATH. `brew --prefix sdl3` gives the exact keg path.
+          echo "SDL3_PREFIX=$(brew --prefix sdl3)" >> $GITHUB_ENV
+          echo "HOMEBREW_PREFIX=$(brew --prefix)" >> $GITHUB_ENV
 
       # ── Windows dependencies ────────────────────────────────────────────────
       - name: Install vcpkg (Windows)
@@ -69,6 +73,12 @@ jobs:
         run: |
           vcpkg install curl nlohmann-json sdl3 --triplet x64-windows
           echo "CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake" >> $env:GITHUB_ENV
+          # Export the SDL3 cmake config dir so find_package(SDL3) and any
+          # FetchContent imgui target can resolve SDL3/SDL.h include dirs.
+          echo "SDL3_DIR=C:\vcpkg\installed\x64-windows\share\sdl3" >> $env:GITHUB_ENV
+          # Also put the SDL3 include root on INCLUDE so MSVC can find it
+          # even when a target forgets to call target_link_libraries(... SDL3::SDL3)
+          echo "INCLUDE=C:\vcpkg\installed\x64-windows\include;$env:INCLUDE" >> $env:GITHUB_ENV
 
       # ── Linux / NixOS-style dependencies ───────────────────────────────────
       - name: Install dependencies (Linux)
@@ -107,8 +117,20 @@ jobs:
           sudo cmake --install /tmp/SDL3/build
 
       # ── Configure project ───────────────────────────────────────────────────
-      - name: Configure (macOS / Linux)
-        if: runner.os != 'Windows'
+
+      # macOS: pass Homebrew keg paths so CMake's FindSDL3 / find_package
+      # locates SDL3/SDL.h without any manual include-dir hacks.
+      - name: Configure (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          cmake -S . -B ${{ matrix.build-dir }} \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="${{ env.SDL3_PREFIX }};${{ env.HOMEBREW_PREFIX }}"
+
+      # Linux: SDL3 was installed to /usr/local by cmake --install, so
+      # it is already on the default search path - no extra flags needed.
+      - name: Configure (Linux)
+        if: runner.os == 'Linux'
         run: |
           cmake -S . -B ${{ matrix.build-dir }} \
             -DCMAKE_BUILD_TYPE=Release
@@ -119,15 +141,24 @@ jobs:
           cmake -S . -B ${{ matrix.build-dir }} `
             -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }} `
-            -DVCPKG_TARGET_TRIPLET=x64-windows
+            -DVCPKG_TARGET_TRIPLET=x64-windows `
+            -DSDL3_DIR=${{ env.SDL3_DIR }} `
+            -DCMAKE_PREFIX_PATH="C:\vcpkg\installed\x64-windows"
 
       # ── Build ───────────────────────────────────────────────────────────────
-      - name: Build (macOS / Linux)
-        if: runner.os != 'Windows'
+      - name: Build (macOS)
+        if: runner.os == 'macOS'
         run: |
           cmake --build ${{ matrix.build-dir }} \
             --config Release \
-            --parallel $(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
+            --parallel $(sysctl -n hw.logicalcpu)
+
+      - name: Build (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          cmake --build ${{ matrix.build-dir }} \
+            --config Release \
+            --parallel $(nproc)
 
       - name: Build (Windows)
         if: runner.os == 'Windows'
