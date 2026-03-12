@@ -17,12 +17,16 @@ jobs:
 
             - name: Install Dependencies
               run: | 
-                sudo apt install libsdl3-dev libcurl-dev
-            
+                sudo apt install libcurl4-openssl-dev
+
+            - name: compile sdl3
+              run: |
+                git clone htttps://github.com/libsdl/sdl
+
             - name: Build app
               run: |
                 mkdir build
                 cd build
                 cmake ..
-                
+
 
