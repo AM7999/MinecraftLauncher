@@ -10,6 +10,7 @@
 #include <imgui_impl_sdlrenderer3.h>
 
 #include "Dialogs.hpp"
+#include "Logic.hpp"
 
 Application::Application() {
     if (SDL_Init(SDL_INIT_VIDEO)) {
@@ -104,8 +105,8 @@ void Application::draw() {
         if (ImGui::BeginPopup(("InstanceContext##" + std::to_string(i)).c_str())) {
             ImGui::Text(instances[i].instanceName.c_str());
             ImGui::Separator();
-            if (ImGui::MenuItem("Launch")) { /* stub */ }
-            if (ImGui::MenuItem("Modify")) { /* stub */ }
+            if (ImGui::MenuItem("Launch")) { Xenia::Logic::launchInstance(instances[i]); }
+            if (ImGui::MenuItem("Modify")) { Xenia::Logic::modifyInstance(instances[i]); }
             if (ImGui::MenuItem("Delete Instance")) { /* stub */ }
             ImGui::EndPopup();
         }
@@ -125,6 +126,10 @@ void Application::draw() {
         if (inst.isModded)
             ImGui::Text("Mod Loader: %s", Xenia::ModLoaderToString(inst.ml).c_str());
         ImGui::Text("Path: %s",        inst.pathToInstance.c_str());
+        if (inst.isModded)
+            if(ImGui::Button("Open mod folder", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
+                std::system(("xdg-open" + inst.pathToInstance).c_str());
+            }
         if (ImGui::Button("Open Instance Folder", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
             std::system(("xdg-open " + inst.pathToInstance).c_str());
         }

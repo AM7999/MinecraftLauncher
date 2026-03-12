@@ -1,10 +1,13 @@
 #ifndef LOGIC_H
 #define LOGIC_H
 
+#include "Structs.h"
+
 namespace Xenia {
     class Logic {
         public:
-            static int launchInstance(int instanceIndex);
+            static void launchInstance(Instance& instance);
+            static void modifyInstance(Instance& instance);
     };
 }
 

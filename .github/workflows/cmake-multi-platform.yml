@@ -1,1 +1,28 @@
+name: Minecraft Launcher build
+
+on:
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
+
+    workflow_dispatch:
+    
+jobs:
+    linux-build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Install Dependencies
+              run: | 
+                sudo apt install libsdl3-dev libcurl-dev
+            
+            - name: Build app
+              run: |
+                mkdir build
+                cd build
+                cmake ..
+                
 
