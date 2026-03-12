@@ -18,7 +18,7 @@ jobs:
             - name: Install Dependencies
               run: | 
                 sudo apt update
-                sudo apt install libcurl4-openssl-dev libx11-6 libx11-dev libwayland-client0 libwayland-server0 libwayland-dev
+                sudo apt install libcurl4-openssl-dev libx11-dev libwayland-dev
 
             - name: compile sdl3
               run: |
