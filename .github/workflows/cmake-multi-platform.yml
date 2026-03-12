@@ -18,7 +18,7 @@ jobs:
             - name: Install Dependencies
               run: | 
                 sudo apt update
-                sudo apt install libcurl4-openssl-dev libx11-dev libwayland-dev build-essential libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libglew-dev libx*-dev
+                sudo apt install libcurl4-openssl-dev libx11-dev libwayland-dev build-essential libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libglew-dev libxcursor-dev
 
             - name: compile sdl3
               run: |
