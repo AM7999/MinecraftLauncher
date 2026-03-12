@@ -48,16 +48,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew update
-          # cURL (already present, but ensure dev headers)
-          brew install curl
-          # nlohmann/json
-          brew install nlohmann-json
-          # SDL3
-          brew install sdl3
-          # Export the Homebrew prefix so CMake can find SDL3/SDL.h via
-          # CMAKE_PREFIX_PATH. `brew --prefix sdl3` gives the exact keg path.
-          echo "SDL3_PREFIX=$(brew --prefix sdl3)" >> $GITHUB_ENV
-          echo "HOMEBREW_PREFIX=$(brew --prefix)" >> $GITHUB_ENV
+          brew install curl nlohmann-json sdl3
 
       # ── Windows dependencies ────────────────────────────────────────────────
       - name: Install vcpkg (Windows)
@@ -73,12 +64,6 @@ jobs:
         run: |
           vcpkg install curl nlohmann-json sdl3 --triplet x64-windows
           echo "CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake" >> $env:GITHUB_ENV
-          # Export the SDL3 cmake config dir so find_package(SDL3) and any
-          # FetchContent imgui target can resolve SDL3/SDL.h include dirs.
-          echo "SDL3_DIR=C:\vcpkg\installed\x64-windows\share\sdl3" >> $env:GITHUB_ENV
-          # Also put the SDL3 include root on INCLUDE so MSVC can find it
-          # even when a target forgets to call target_link_libraries(... SDL3::SDL3)
-          echo "INCLUDE=C:\vcpkg\installed\x64-windows\include;$env:INCLUDE" >> $env:GITHUB_ENV
 
       # ── Linux / NixOS-style dependencies ───────────────────────────────────
       - name: Install dependencies (Linux)
@@ -118,14 +103,26 @@ jobs:
 
       # ── Configure project ───────────────────────────────────────────────────
 
-      # macOS: pass Homebrew keg paths so CMake's FindSDL3 / find_package
-      # locates SDL3/SDL.h without any manual include-dir hacks.
+      # macOS: brew installs SDL3 into a versioned keg. We resolve the exact
+      # paths at install time and bake them into GITHUB_ENV so the configure
+      # step can pass them as hard CMake cache entries. This ensures FetchContent
+      # sub-projects (like imgui) that call find_package(SDL3) also resolve
+      # SDL3/SDL.h correctly, regardless of CMAKE_PREFIX_PATH inheritance.
       - name: Configure (macOS)
         if: runner.os == 'macOS'
         run: |
+          SDL3_PREFIX="$(brew --prefix sdl3)"
+          SDL3_INCLUDE="${SDL3_PREFIX}/include"
+          SDL3_LIB="${SDL3_PREFIX}/lib"
+          echo "Resolved SDL3 prefix: ${SDL3_PREFIX}"
+          echo "SDL3 include dir: ${SDL3_INCLUDE}"
+          ls "${SDL3_INCLUDE}/SDL3/" || echo "WARNING: SDL3 headers not found at expected path"
           cmake -S . -B ${{ matrix.build-dir }} \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_PREFIX_PATH="${{ env.SDL3_PREFIX }};${{ env.HOMEBREW_PREFIX }}"
+            -DCMAKE_PREFIX_PATH="${SDL3_PREFIX};$(brew --prefix)" \
+            -DSDL3_DIR="${SDL3_PREFIX}/lib/cmake/SDL3" \
+            -DSDL3_INCLUDE_DIR="${SDL3_INCLUDE}" \
+            -DSDL3_LIBRARY="${SDL3_LIB}/libSDL3.dylib"
 
       # Linux: SDL3 was installed to /usr/local by cmake --install, so
       # it is already on the default search path - no extra flags needed.
@@ -138,12 +135,24 @@ jobs:
       - name: Configure (Windows)
         if: runner.os == 'Windows'
         run: |
+          $SDL3_INCLUDE = "C:\vcpkg\installed\x64-windows\include"
+          $SDL3_LIB     = "C:\vcpkg\installed\x64-windows\lib\SDL3.lib"
+          $SDL3_DIR     = "C:\vcpkg\installed\x64-windows\share\sdl3"
+          Write-Host "SDL3 include: $SDL3_INCLUDE"
+          Write-Host "SDL3 lib:     $SDL3_LIB"
+          if (Test-Path "$SDL3_INCLUDE\SDL3\SDL.h") {
+            Write-Host "SDL3/SDL.h found OK"
+          } else {
+            Write-Error "WARNING: SDL3/SDL.h not found at $SDL3_INCLUDE\SDL3\SDL.h"
+          }
           cmake -S . -B ${{ matrix.build-dir }} `
             -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }} `
             -DVCPKG_TARGET_TRIPLET=x64-windows `
-            -DSDL3_DIR=${{ env.SDL3_DIR }} `
-            -DCMAKE_PREFIX_PATH="C:\vcpkg\installed\x64-windows"
+            -DCMAKE_PREFIX_PATH="C:\vcpkg\installed\x64-windows" `
+            -DSDL3_DIR="$SDL3_DIR" `
+            -DSDL3_INCLUDE_DIR="$SDL3_INCLUDE" `
+            -DSDL3_LIBRARY="$SDL3_LIB"
 
       # ── Build ───────────────────────────────────────────────────────────────
       - name: Build (macOS)
