@@ -22,7 +22,7 @@ jobs:
 
             - name: compile sdl3
               run: |
-                git clone https://github.com/libsdl/sdl
+                git clone https://github.com/libsdl-org/sdl
                 cd sdl
                 mkdir build
                 cd build
