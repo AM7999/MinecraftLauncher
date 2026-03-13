@@ -31,7 +31,7 @@ jobs:
           mkdir build && cd build
           cmake .. \
             -G Ninja \
-            -DSDL_WAYLAND=ON
+            -DSDL_WAYLAND=ON \
             -DSDL_SHARED=ON \
             -DSDL_VIDEO=ON \
             -DSDL_RENDER=ON \
