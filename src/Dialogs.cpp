@@ -53,7 +53,7 @@ void Xenia::JdkDialog(bool *w_open) {
         ImGui::SetWindowFocus();
 
         ImGui::Spacing();
-        ImGui::
-
+        //ImGui::
+        ImGui::End();
     }
 }
