@@ -18,7 +18,6 @@ int main(int argc, char *argv[]) {
     while (a->getIsRunning()) {
         frameStart = SDL_GetTicks();
 
-
         a->handleEvents();
         a->draw();
 

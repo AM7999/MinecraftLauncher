@@ -2,15 +2,19 @@
 
 #include <imgui.h>
 
-void Xenia::NewInstanceDialog(bool* p_open) {
-    if (!p_open || !*p_open)
+#include "Structs.h"
+
+void Xenia::NewInstanceDialog(bool* w_open) {
+    if (!w_open || !*w_open)
         return;
 
     static char txtBuff[32] = "";
-    static int instanceType = 0;
+    int instanceType = Xenia::ModLoader::NONE;
 
     ImGui::SetNextWindowSize(ImVec2(300, 150), ImGuiCond_FirstUseEver);
-    if (ImGui::Begin("New Instance", p_open)) {
+    if (ImGui::Begin("New Instance", w_open)) {
+
+        ImGui::SetWindowFocus();
 
         ImGui::Spacing();
         ImGui::InputText("Instance Name", txtBuff, sizeof(txtBuff));
@@ -28,15 +32,28 @@ void Xenia::NewInstanceDialog(bool* p_open) {
         if (ImGui::Button("Create", ImVec2(80, 0))) {
             //CreateInstance(txtBuff, instanceType);
             txtBuff[0] = '\0';
-            *p_open = false;
+            *w_open = false;
         }
         if (!canCreate) ImGui::EndDisabled();
 
         ImGui::SameLine();
         if (ImGui::Button("Cancel", ImVec2(80, 0))) {
             txtBuff[0] = '\0';
-            *p_open = false;
+            *w_open = false;
         }
     }
     ImGui::End();
+}
+
+void Xenia::JdkDialog(bool *w_open) {
+    if (!w_open || !*w_open)
+        return;
+
+    if (ImGui::Begin("Installed JDKs", w_open)) {
+        ImGui::SetWindowFocus();
+
+        ImGui::Spacing();
+        ImGui::
+
+    }
 }

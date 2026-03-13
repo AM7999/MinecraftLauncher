@@ -7,7 +7,7 @@
     {
       "name": "Adoptium JDK",
       "jdkVersion": 17,
-      "pathToExec": "/path"
+      "pathToExec": "/home/xenia/.jdks/adopt17/bin/java"
     }
   ],
   "instances": [
@@ -19,7 +19,7 @@
         "isModded": false,
         "modLoader": null
       },
-      "pathToInstance": "/path"
+      "pathToInstance": "/home/xenia/"
     },
     {
       "name": "anotherMinecraft",
@@ -29,7 +29,7 @@
         "isModded": true,
         "modLoader": "neoforge"
       },
-      "pathToInstance": "/path"
+      "pathToInstance": "/home/xenia"
     }
   ]
 }
