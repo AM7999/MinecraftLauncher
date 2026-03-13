@@ -5,6 +5,8 @@ project(MinecraftLauncher)
 find_package(CURL REQUIRED)
 find_package(SDL3 REQUIRED)
 
+set(CURL_USE_STATIC_LIBS ON)
+
 include(FetchContent)
 
 FetchContent_Declare(
