@@ -10,23 +10,41 @@ on:
 jobs:
   linux-build:
     runs-on: ubuntu-latest
+    container:
+      image: alpine:latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install Dependencies
         run: |
-          sudo apt-get update
-          sudo apt install -y libcurl4-openssl-dev \
-              pkg-config ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
-              libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
-              libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
-              libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
-              libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev nlohmann-json3-dev 
+          apk add --no-cache \
+            build-base cmake ninja git pkgconf \
+            curl-dev curl-static \
+            openssl-dev openssl-libs-static \
+            zlib-dev zlib-static \
+            libx11-dev libxext-dev libxrandr-dev \
+            libxcursor-dev libxfixes-dev libxi-dev \
+            libxss-dev libxtst-dev libxkbcommon-dev \
+            mesa-dev libdrm-dev libgbm-dev \
+            dbus-dev eudev-dev \
+            alsa-lib-dev \
+            ibus-dev \
+            fribidi-dev \
+            nlohmann-json \
+            linux-headers
+
+      - name: Cache SDL3
+        uses: actions/cache@v4
+        with:
+          path: /usr/local
+          key: sdl3-${{ runner.os }}-release-3.2.10
 
       - name: Compile SDL3
         run: |
-          git clone https://github.com/libsdl-org/SDL sdl
+          git clone --branch release-3.2.10 --depth 1 \
+            https://github.com/libsdl-org/SDL sdl
           cd sdl
           mkdir build && cd build
           cmake .. \
@@ -49,16 +67,24 @@ jobs:
             -DSDL_TEST_LIBRARY=OFF \
             -DSDL_DEPS_SHARED=OFF \
             -DSDL_PTHREADS=ON \
-            -DSDL_GCC_ATOMICS=ON
+            -DSDL_GCC_ATOMICS=ON \
+            -DCMAKE_BUILD_TYPE=Release
           ninja -j $(nproc)
-          sudo ninja install
+          ninja install
 
       - name: Build app
-        working-directory: ${{ github.workspace }}
         run: |
           mkdir build && cd build
-          cmake .. -G Ninja
+          cmake .. -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_EXE_LINKER_FLAGS="-static -static-libgcc -static-libstdc++" \
+            -DCMAKE_FIND_LIBRARY_SUFFIXES=".a" \
+            -DSDL3_DIR=/usr/local/lib/cmake/SDL3 \
+            -DBUILD_SHARED_LIBS=OFF
           ninja -j $(nproc)
+
+      - name: Verify binary exists
+        run: test -f build/MinecraftLauncher
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
