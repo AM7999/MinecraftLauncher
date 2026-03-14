@@ -50,7 +50,10 @@ add_executable(MinecraftLauncher WIN32
         src/Logic.hpp
 )
 target_link_libraries(MinecraftLauncher SDL3::SDL3 imgui OpenSSL::SSL)
-target_link_options(MinecraftLauncher PRIVATE -static -static-libgcc -static-libstdc++)
+
+if(WIN32)
+    target_link_options(MinecraftLauncher PRIVATE -static -static-libgcc -static-libstdc++)
+endif()
 
 add_custom_command(TARGET MinecraftLauncher POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
