@@ -3,9 +3,10 @@ cmake_minimum_required(VERSION 3.16...4.0)
 project(MinecraftLauncher)
 
 find_package(CURL REQUIRED)
+find_package(OpenSSL REQUIRED)
 find_package(SDL3 REQUIRED)
 
-set(CURL_USE_STATIC_LIBS ON)
+#set(CURL_USE_STATIC_LIBS ON)
 
 include(FetchContent)
 
@@ -46,4 +47,12 @@ add_executable(MinecraftLauncher WIN32
         src/Logic.cpp
         src/Logic.hpp
 )
-target_link_libraries(MinecraftLauncher CURL::libcurl SDL3::SDL3 imgui)
+target_link_libraries(MinecraftLauncher SDL3::SDL3 imgui OpenSSL::SSL)
+target_link_options(MinecraftLauncher PRIVATE -static -static-libgcc -static-libstdc++)
+
+add_custom_command(TARGET MinecraftLauncher POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_RUNTIME_DLLS:MinecraftLauncher>
+        $<TARGET_FILE_DIR:MinecraftLauncher>
+        COMMAND_EXPAND_LISTS
+)

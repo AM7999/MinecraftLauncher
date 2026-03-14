@@ -14,7 +14,6 @@ class Application {
         Application();
         ~Application();
         void handleEvents();
-        //void update();
         void draw();
 
         bool getIsRunning() { return isRunning; }

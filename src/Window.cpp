@@ -33,6 +33,7 @@ Application::Application() {
         ImGui_ImplSDL3_InitForSDLRenderer(wnd, ren);
         ImGui_ImplSDLRenderer3_Init(ren);
 
+        m_showSettings = false;
         m_showNewInstance = false;
 
         std::ifstream file("launcherSettings.json");

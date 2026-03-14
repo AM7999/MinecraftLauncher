@@ -12,20 +12,46 @@ namespace Xenia {
         FABRIC,
         QUILT,
         NEOFORGE
-      };
+    };
+
+    inline Xenia::ModLoader intToModloader(const int ml) {
+        switch(ml) {
+            case Xenia::ModLoader::NONE:
+                return Xenia::ModLoader::NONE;
+                break;
+            case Xenia::ModLoader::FORGE:
+                return Xenia::ModLoader::FORGE;
+                break;
+            case Xenia::ModLoader::FABRIC:
+                return Xenia::ModLoader::FABRIC;
+                break;
+            case Xenia::ModLoader::QUILT:
+                return Xenia::ModLoader::QUILT;
+                break;
+            case Xenia::ModLoader::NEOFORGE:
+                return Xenia::ModLoader::NEOFORGE;
+                break;
+        }
+        return Xenia::ModLoader::NONE;
+    }
 
     inline std::string ModLoaderToString(const ModLoader& ml) {
         switch (ml) {
             case Xenia::ModLoader::NONE:
                 return "none";
+                break;
             case Xenia::ModLoader::FORGE:
                 return "forge";
+                break;
             case Xenia::ModLoader::FABRIC:
                 return "fabric";
+                break;
             case Xenia::ModLoader::QUILT:
                 return "quilt";
+                break;
             case Xenia::ModLoader::NEOFORGE:
                 return "neoforge";
+                break;
         }
 
         return "";

@@ -8,7 +8,7 @@ void Xenia::Logic::launchInstance(Instance& inst) {
 }
 
 void Xenia::Logic::DownloadMinecraft() {
-
+    
 }
 
 //hey angel. its me milan ok bye

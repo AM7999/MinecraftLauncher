@@ -51,7 +51,8 @@ void Xenia::NewInstanceDialog(bool* w_open, std::vector<Xenia::Instance>* instan
         return;
 
     static char txtBuff[32] = "";
-    int instanceType = Xenia::ModLoader::NONE;
+    static int instanceType = Xenia::ModLoader::NONE;
+    static bool modded = false;
 
     ImGui::SetNextWindowSize(ImVec2(300, 150), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("New Instance", w_open)) {
@@ -63,7 +64,10 @@ void Xenia::NewInstanceDialog(bool* w_open, std::vector<Xenia::Instance>* instan
 
         ImGui::Spacing();
         ImGui::Text("Instance Type:");
-        ImGui::RadioButton("Vanilla", &instanceType, 0);
+        ImGui::Checkbox("Modded", &modded);
+        ImGui::RadioButton("Neoforge", &instanceType, Xenia::ModLoader::NEOFORGE);
+        ImGui::SameLine();
+        ImGui::RadioButton("Forge", &instanceType, Xenia::ModLoader::FORGE);
 
         ImGui::Spacing();
         ImGui::Separator();
@@ -72,7 +76,7 @@ void Xenia::NewInstanceDialog(bool* w_open, std::vector<Xenia::Instance>* instan
 
         if (!canCreate) ImGui::BeginDisabled();
         if (ImGui::Button("Create", ImVec2(80, 0))) {
-            instances->push_back({txtBuff, "1.21.1", 21, false, ModLoader::NONE, "/path"});
+            instances->push_back({txtBuff, "1.21.1", 21, modded, Xenia::intToModloader(instanceType), "/path"});
             txtBuff[0] = '\0';
             *w_open = false;
         }
