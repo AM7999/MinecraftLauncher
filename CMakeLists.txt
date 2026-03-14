@@ -6,6 +6,8 @@ find_package(CURL REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(SDL3 REQUIRED)
 
+set(CMAKE_CXX_STANDARD 20)
+
 #set(CURL_USE_STATIC_LIBS ON)
 
 include(FetchContent)
