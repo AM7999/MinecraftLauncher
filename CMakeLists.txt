@@ -57,9 +57,11 @@ elseif(UNIX)
     target_link_options(MinecraftLauncher PRIVATE -static-libgcc -static-libstdc++)
 endif()
 
-add_custom_command(TARGET MinecraftLauncher POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_RUNTIME_DLLS:MinecraftLauncher>
-        $<TARGET_FILE_DIR:MinecraftLauncher>
-        COMMAND_EXPAND_LISTS
-)
+if(WIN32)
+        add_custom_command(TARGET MinecraftLauncher POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_RUNTIME_DLLS:MinecraftLauncher>
+                $<TARGET_FILE_DIR:MinecraftLauncher>
+                COMMAND_EXPAND_LISTS
+        )
+endif()
