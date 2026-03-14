@@ -8,6 +8,18 @@ on:
   workflow_dispatch:
 
 jobs:
+  windows-build:
+    runs-on: windows-2019
+    steps:
+      - name: Install MinGW
+        uses: egor-tensin/setup-mingw@v3
+        with:
+          platform: x64
+      
+      - name: Install Dependencies
+        run: |
+          pacman -Syu mingw-w64-x86_64-curl
+
   linux-build:
     runs-on: ubuntu-latest
     steps:
