@@ -9,7 +9,7 @@ on:
 
 jobs:
   mac-intel-build:
-    runs-on: macos-14-large
+    runs-on: macos-15-intel
     steps:
       - name: Checkout
         uses: actions/checkout@v4
