@@ -24,8 +24,10 @@ class Application {
         bool isRunning;
         std::vector<Xenia::Instance> instances;
         std::vector<Xenia::JDK> jdks;
+        Xenia::clientSettings clientSettings;
         ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar;
-        bool m_showNewInstance{};
+        bool m_showNewInstance;
+        bool m_showSettings;
 };
 
 #endif

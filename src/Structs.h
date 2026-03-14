@@ -53,11 +53,31 @@ namespace Xenia {
     };
 }
 
-// Serialization/Deserialization for Xenia::Instance
+// Serialization/Deserialization for Xenia::Instance and Xenia::JDK
 namespace nlohmann {
+    template<>
+    struct adl_serializer<Xenia::clientSettings> {
+        static void to_json(json &j, const Xenia::clientSettings &i) {
+            j = json{
+                {"username", i.username},
+                {"maxMemoryAlloc", i.memory},
+                {"online", i.online}
+            };
+        }
+        static void from_json(const json &j, Xenia::clientSettings &i) {
+            try {
+                i.username = j.at("username").get<std::string>();
+                i.memory = j.at("maxMemoryAlloc").get<int>();
+                i.online = j.at("online").get<bool>();
+            }
+            catch (std::exception &e) {
+                std::cerr << e.what();
+            }
+        }
+    };
     template <>
     struct adl_serializer<Xenia::JDK> {
-        static void to_json(json &j, Xenia::JDK &jdk) {
+        static void to_json(json &j, const Xenia::JDK &jdk) {
             j = json{
                 {"name", jdk.vendor},
                 {"jdkVersion", jdk.javaVersion},
@@ -67,8 +87,8 @@ namespace nlohmann {
         static void from_json(const json &j, Xenia::JDK &jdk) {
             try {
                 jdk.vendor = j.at("name").get<std::string>();
-                jdk.javaVersion = j.at("version").get<int>();
-                jdk.path = j.at("path").get<std::string>();
+                jdk.javaVersion = j.at("jdkVersion").get<int>();
+                jdk.path = j.at("pathToExec").get<std::string>();
             }
             catch(std::exception &e) {
                 std::cout << e.what();
@@ -93,7 +113,7 @@ namespace nlohmann {
                 {"version", i.minecraftVersion},
                 {"javaVersion", i.javaVersion},
                 {"modded", {
-                    {"modded", i.isModded},
+                    {"isModded", i.isModded},
                     {"modLoader", modloaderString}
                 }},
                 {"pathToInstance", i.pathToInstance},

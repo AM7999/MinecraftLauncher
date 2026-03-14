@@ -35,10 +35,12 @@ Application::Application() {
 
         m_showNewInstance = false;
 
-        std::ifstream file("../launcherSettings.json");
+        std::ifstream file("launcherSettings.json");
         nlohmann::json j;
         file >> j;
         instances = j.at("instances").get<std::vector<Xenia::Instance>>();
+        jdks = j.at("installedJdks").get<std::vector<Xenia::JDK>>();
+        clientSettings = j.at("userSettings").get<Xenia::clientSettings>();
         file.close();
     }
     else {
@@ -48,15 +50,17 @@ Application::Application() {
 
 Application::~Application() {
     // store everything back into json
-    std::ifstream file("../launcherSettings.json");
+    std::ifstream file("launcherSettings.json");
     nlohmann::json j;
     file >> j;
     file.close();
 
     j["instances"] = instances;
+    j["installedJdks"] = jdks;
+    j["userSettings"] = clientSettings;
 
-    std::ofstream file2("../launcherSettings.json");
-    file2 << j.dump(3);
+    std::ofstream file2("launcherSettings.json");
+    file2 << j.dump();
     file2.close();
 
     SDL_DestroyRenderer(ren);
@@ -94,6 +98,7 @@ void Application::draw() {
 
     if (ImGui::BeginMenuBar()) {
         if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Settings", "Ctrl + N")) { m_showSettings = true; }
             if (ImGui::MenuItem("New Instance", "Ctrl + N")) { m_showNewInstance = true; }
             if (ImGui::MenuItem("Quit.", "Ctrl + Q")) { isRunning = false; }
             ImGui::EndMenu();
@@ -102,10 +107,15 @@ void Application::draw() {
     }
 
     if(m_showNewInstance)
-        Xenia::NewInstanceDialog(&m_showNewInstance);
+        Xenia::NewInstanceDialog(&m_showNewInstance, &instances);
+    if (m_showSettings)
+        Xenia::SettingsDialog(&m_showSettings, &clientSettings);
 
-    // Left panel - instance list
-    ImGui::BeginChild("InstanceList", ImVec2(200, 0), true);
+    // // Left panel - instance list
+    ImGui::BeginGroup();
+
+    float buttonHeight = ImGui::GetFrameHeightWithSpacing();
+    ImGui::BeginChild("InstanceList", ImVec2(200, -buttonHeight), true);
     for (int i = 0; i < instances.size(); i++) {
         bool selected = (selectedIndex == i);
         if (ImGui::Selectable(instances[i].instanceName.c_str(), selected))
@@ -115,7 +125,7 @@ void Application::draw() {
             ImGui::OpenPopup(("InstanceContext##" + std::to_string(i)).c_str());
 
         if (ImGui::BeginPopup(("InstanceContext##" + std::to_string(i)).c_str())) {
-            ImGui::Text(instances[i].instanceName.c_str());
+            ImGui::Text("%s", instances[i].instanceName.c_str());
             ImGui::Separator();
             if (ImGui::MenuItem("Launch")) { Xenia::Logic::launchInstance(instances[i]); }
             if (ImGui::MenuItem("Modify")) { Xenia::Logic::modifyInstance(instances[i]); }
@@ -124,6 +134,11 @@ void Application::draw() {
         }
     }
     ImGui::EndChild();
+
+    if (ImGui::Button("New Instance", ImVec2(200, 0)))
+        m_showNewInstance = true;
+
+    ImGui::EndGroup();
 
     ImGui::SameLine();
 
@@ -140,7 +155,7 @@ void Application::draw() {
         ImGui::Text("Path: %s",        inst.pathToInstance.c_str());
         if (inst.isModded)
             if(ImGui::Button("Open mod folder", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
-                std::system(("xdg-open" + inst.pathToInstance).c_str());
+                std::system(("xdg-open" + inst.pathToInstance + "/mods").c_str());
             }
         if (ImGui::Button("Open Instance Folder", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
             std::system(("xdg-open " + inst.pathToInstance).c_str());

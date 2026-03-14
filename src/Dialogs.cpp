@@ -4,7 +4,49 @@
 
 #include "Structs.h"
 
-void Xenia::NewInstanceDialog(bool* w_open) {
+void Xenia::SettingsDialog(bool* w_open, Xenia::clientSettings* cs) {
+    if (!w_open || !*w_open)
+        return;
+
+    static char txtBuff[16] = "";
+    static int memory = 0;
+
+    if (ImGui::Begin("Settings", w_open)) {
+        ImGui::SetWindowFocus();
+
+        ImGui::Spacing();
+
+        ImGui::Text("Current Username: %s", cs->username.c_str());
+        ImGui::Text("Current Memory: %s", std::to_string(cs->memory).c_str());
+
+        ImGui::Spacing();
+
+        ImGui::InputText("Username", txtBuff, sizeof(txtBuff));
+
+        ImGui::Spacing();
+        ImGui::InputInt("Label", &memory, 1, 100);
+
+        ImGui::Spacing();
+        ImGui::Separator();
+
+        if (ImGui::Button("Save", ImVec2(80, 0))) {
+            cs->username = txtBuff;
+            cs->memory = memory;
+            memory = 0;
+            txtBuff[0] = '\0';
+            *w_open = false;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel", ImVec2(80, 0))) {
+            memory = 0;
+            txtBuff[0] = '\0';
+            *w_open = false;
+        }
+    }
+    ImGui::End();
+}
+
+void Xenia::NewInstanceDialog(bool* w_open, std::vector<Xenia::Instance>* instances) {
     if (!w_open || !*w_open)
         return;
 
@@ -30,7 +72,7 @@ void Xenia::NewInstanceDialog(bool* w_open) {
 
         if (!canCreate) ImGui::BeginDisabled();
         if (ImGui::Button("Create", ImVec2(80, 0))) {
-            //CreateInstance(txtBuff, instanceType);
+            instances->push_back({txtBuff, "1.21.1", 21, false, ModLoader::NONE, "/path"});
             txtBuff[0] = '\0';
             *w_open = false;
         }
@@ -45,7 +87,7 @@ void Xenia::NewInstanceDialog(bool* w_open) {
     ImGui::End();
 }
 
-void Xenia::JdkDialog(bool *w_open) {
+void Xenia::JdkDialog(bool *w_open, std::vector<Xenia::JDK>* jdks) {
     if (!w_open || !*w_open)
         return;
 
