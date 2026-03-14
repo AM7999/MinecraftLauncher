@@ -11,14 +11,37 @@ jobs:
   windows-build:
     runs-on: windows-latest
     steps:
-      - name: Install MinGW
-        uses: egor-tensin/setup-mingw@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install And Setup MinGW
+        uses: msys2/setup-msys2@v2
         with:
-          platform: x64
-      
-      - name: Install Dependencies
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-SDL3
+            mingw-w64-x86_64-curl
+            mingw-w64-x86_64-nlohmann-json
+
+      - name: Configure Project
         run: |
-          pacman -Syu mingw-w64-x86_64-curl
+          cmake -B build -G Ninja
+      
+      - name: Build Project
+        run: cmake -- build build
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: MinecraftLauncher_Windows-x64
+          path: |
+            build/MinecraftLauncher.exe
+            build/SDL3.dll
+      
 
   linux-build:
     runs-on: ubuntu-latest
@@ -34,36 +57,13 @@ jobs:
               libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
               libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
               libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
-              libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev nlohmann-json3-dev 
+              libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev nlohmann-json3-dev \
+              libssl-dev
 
-      - name: Compile SDL3
-        run: |
-          git clone https://github.com/libsdl-org/SDL sdl
-          cd sdl
-          mkdir build && cd build
-          cmake .. \
-            -G Ninja \
-            -DSDL_WAYLAND=ON \
-            -DSDL_SHARED=ON \
-            -DSDL_VIDEO=ON \
-            -DSDL_RENDER=ON \
-            -DSDL_EVENTS=ON \
-            -DSDL_AUDIO=OFF \
-            -DSDL_JOYSTICK=OFF \
-            -DSDL_HAPTIC=OFF \
-            -DSDL_SENSOR=OFF \
-            -DSDL_CAMERA=OFF \
-            -DSDL_GPU=OFF \
-            -DSDL_HIDAPI=OFF \
-            -DSDL_POWER=OFF \
-            -DSDL_TRAY=OFF \
-            -DSDL_TESTS=OFF \
-            -DSDL_TEST_LIBRARY=OFF \
-            -DSDL_DEPS_SHARED=OFF \
-            -DSDL_PTHREADS=ON \
-            -DSDL_GCC_ATOMICS=ON
-          ninja -j $(nproc)
-          sudo ninja install
+      - uses: libsdl-org/setup-sdl@main
+        with:
+          version: 3-latest
+          install-linux-dependencies: true
 
       - name: Build app
         working-directory: ${{ github.workspace }}
@@ -75,5 +75,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: MinecraftLauncher-linux
+          name: MinecraftLauncher_Linux-x86_64
           path: build/MinecraftLauncher
