@@ -53,6 +53,8 @@ target_link_libraries(MinecraftLauncher SDL3::SDL3 imgui OpenSSL::SSL)
 
 if(WIN32)
     target_link_options(MinecraftLauncher PRIVATE -static -static-libgcc -static-libstdc++)
+elseif(UNIX)
+    target_link_options(MinecraftLauncher PRIVATE -static-libgcc -static-libstdc++)
 endif()
 
 add_custom_command(TARGET MinecraftLauncher POST_BUILD
