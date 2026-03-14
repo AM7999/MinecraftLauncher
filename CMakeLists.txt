@@ -60,11 +60,56 @@ elseif(APPLE)
 elseif(UNIX)
     target_link_options(MinecraftLauncher PRIVATE -static-libgcc -static-libstdc++)
 endif()
+
 if(WIN32)
-        add_custom_command(TARGET MinecraftLauncher POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                $<TARGET_RUNTIME_DLLS:MinecraftLauncher>
-                $<TARGET_FILE_DIR:MinecraftLauncher>
-                COMMAND_EXPAND_LISTS
-        )
+    add_custom_command(TARGET MinecraftLauncher POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:MinecraftLauncher>
+            $<TARGET_FILE_DIR:MinecraftLauncher>
+        COMMAND_EXPAND_LISTS
+    )
+elseif(APPLE)
+    add_custom_command(TARGET MinecraftLauncher POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE:SDL3::SDL3>
+            $<TARGET_FILE_DIR:MinecraftLauncher>/libSDL3.dylib
+        COMMAND ${CMAKE_COMMAND} -E copy
+            /usr/local/opt/openssl/lib/libssl.3.dylib
+            $<TARGET_FILE_DIR:MinecraftLauncher>/libssl.3.dylib
+        COMMAND ${CMAKE_COMMAND} -E copy
+            /usr/local/opt/openssl/lib/libcrypto.3.dylib
+            $<TARGET_FILE_DIR:MinecraftLauncher>/libcrypto.3.dylib
+        COMMAND install_name_tool -id @executable_path/libSDL3.dylib
+            $<TARGET_FILE_DIR:MinecraftLauncher>/libSDL3.dylib
+        COMMAND install_name_tool -id @executable_path/libssl.3.dylib
+            $<TARGET_FILE_DIR:MinecraftLauncher>/libssl.3.dylib
+        COMMAND install_name_tool -id @executable_path/libcrypto.3.dylib
+            $<TARGET_FILE_DIR:MinecraftLauncher>/libcrypto.3.dylib
+        COMMAND install_name_tool -change
+            $<TARGET_SONAME_FILE:SDL3::SDL3>
+            @executable_path/libSDL3.dylib
+            $<TARGET_FILE:MinecraftLauncher>
+        COMMAND install_name_tool -change
+            /usr/local/opt/openssl/lib/libssl.3.dylib
+            @executable_path/libssl.3.dylib
+            $<TARGET_FILE:MinecraftLauncher>
+        COMMAND install_name_tool -change
+            /usr/local/opt/openssl/lib/libcrypto.3.dylib
+            @executable_path/libcrypto.3.dylib
+            $<TARGET_FILE:MinecraftLauncher>
+    )
+elseif(UNIX)
+    add_custom_command(TARGET MinecraftLauncher POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE:SDL3::SDL3>
+            $<TARGET_FILE_DIR:MinecraftLauncher>/libSDL3.so
+        COMMAND ${CMAKE_COMMAND} -E copy
+            /usr/lib/libssl.so.3
+            $<TARGET_FILE_DIR:MinecraftLauncher>/libssl.so.3
+        COMMAND ${CMAKE_COMMAND} -E copy
+            /usr/lib/libcrypto.so.3
+            $<TARGET_FILE_DIR:MinecraftLauncher>/libcrypto.so.3
+        COMMAND patchelf --set-rpath '$ORIGIN'
+            $<TARGET_FILE:MinecraftLauncher>
+    )
 endif()

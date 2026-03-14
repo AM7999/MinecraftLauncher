@@ -29,6 +29,7 @@ jobs:
           name: MinecraftLauncher_macOS-intel
           path: |
             build/MinecraftLauncher
+            build/SDL3.dylib
 
   windows-build:
     runs-on: windows-latest
@@ -84,7 +85,7 @@ jobs:
               libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
               libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
               libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev nlohmann-json3-dev \
-              libssl-dev
+              libssl-dev patchelf
 
       - uses: libsdl-org/setup-sdl@main
         with:
@@ -102,4 +103,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MinecraftLauncher_Linux-x86_64
-          path: build/MinecraftLauncher
+          path: | 
+            build/MinecraftLauncher
+            build/SDL3.so
