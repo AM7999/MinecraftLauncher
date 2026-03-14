@@ -8,8 +8,8 @@ using nlohmann::json;
 
 Application* a = new Application();
 
-const int targetFps = 60;
-const int frameDelay = 1000/targetFps;
+constexpr int targetFps = 60;
+constexpr int frameDelay = 1000/targetFps;
 
 Uint32 frameStart;
 int frameTime;

@@ -39,6 +39,7 @@ Application::Application() {
         nlohmann::json j;
         file >> j;
         instances = j.at("instances").get<std::vector<Xenia::Instance>>();
+        file.close();
     }
     else {
         isRunning = false;
@@ -47,6 +48,17 @@ Application::Application() {
 
 Application::~Application() {
     // store everything back into json
+    std::ifstream file("../launcherSettings.json");
+    nlohmann::json j;
+    file >> j;
+    file.close();
+
+    j["instances"] = instances;
+
+    std::ofstream file2("../launcherSettings.json");
+    file2 << j.dump(3);
+    file2.close();
+
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(wnd);
     SDL_Quit();
@@ -107,7 +119,7 @@ void Application::draw() {
             ImGui::Separator();
             if (ImGui::MenuItem("Launch")) { Xenia::Logic::launchInstance(instances[i]); }
             if (ImGui::MenuItem("Modify")) { Xenia::Logic::modifyInstance(instances[i]); }
-            if (ImGui::MenuItem("Delete Instance")) { /* stub */ }
+            if (ImGui::MenuItem("Delete Instance")) { instances.erase(instances.begin() + i); }
             ImGui::EndPopup();
         }
     }

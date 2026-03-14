@@ -8,6 +8,7 @@ namespace Xenia {
         public:
             static void launchInstance(Instance& instance);
             static void modifyInstance(Instance& instance);
+            //static Xenia::Instance createInstance(std::vector<Xenia::Instance>& instances);
     };
 }
 

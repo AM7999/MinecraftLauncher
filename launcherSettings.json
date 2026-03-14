@@ -1,35 +1,35 @@
 {
-  "userSettings": {
-    "username": "testUsername",
-    "maxMemoryAlloc": 4096
-  },
-  "installedJdks": [
-    {
-      "name": "Adoptium JDK",
-      "jdkVersion": 17,
-      "pathToExec": "/home/xenia/.jdks/adopt17/bin/java"
-    }
-  ],
-  "instances": [
-    {
-      "name": "minecraft",
-      "version": "snapshot-21w17a",
-      "javaVersion": 17,
-      "modded": {
-        "isModded": false,
-        "modLoader": null
-      },
-      "pathToInstance": "/home/xenia/"
+    "userSettings": {
+        "username": "testUsername",
+        "maxMemoryAlloc": 4096
     },
-    {
-      "name": "anotherMinecraft",
-      "version": "1.9",
-      "javaVersion": 8,
-      "modded": {
-        "isModded": true,
-        "modLoader": "neoforge"
-      },
-      "pathToInstance": "/home/xenia"
-    }
-  ]
+    "installedJdks": [
+        {
+            "name": "Adoptium JDK",
+            "jdkVersion": 17,
+            "pathToExec": "/home/xenia/.jdks/adopt17/bin/java"
+        }
+    ],
+    "instances": [
+        {
+            "name": "minecraft",
+            "version": "snapshot-21w17a",
+            "javaVersion": 17,
+            "modded": {
+                "isModded": false,
+                "modLoader": null
+            },
+            "pathToInstance": "/home/xenia/"
+        },
+        {
+            "name": "anotherMinecraft",
+            "version": "1.9",
+            "javaVersion": 8,
+            "modded": {
+                "isModded": true,
+                "modLoader": "neoforge"
+            },
+            "pathToInstance": "/home/xenia"
+        }
+    ]
 }
