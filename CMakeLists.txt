@@ -37,6 +37,8 @@ target_link_libraries(imgui
         SDL3::SDL3
 )
 
+set(OPENSSL_USE_STATIC_LIBS TRUE)
+
 add_executable(MinecraftLauncher WIN32
         src/Structs.h
         src/Main.cpp
