@@ -31,7 +31,12 @@ target_include_directories(imgui PUBLIC
         ${imgui_SOURCE_DIR}/backends
 )
 
-add_executable(MinecraftLauncher
+target_link_libraries(imgui
+        PUBLIC
+        SDL3::SDL3
+)
+
+add_executable(MinecraftLauncher WIN32
         src/Structs.h
         src/Main.cpp
         src/Window.cpp
