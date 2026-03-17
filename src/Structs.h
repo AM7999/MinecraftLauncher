@@ -57,6 +57,15 @@ namespace Xenia {
         return "";
     }
 
+    // structs just for iterating through jsons downloaded
+    // mainly for imgui
+    struct version {
+        std::string id;
+        std::string type;
+        std::string url;
+    };
+
+    // Client specific structs
     struct clientSettings {
         std::string username;
         bool online;
@@ -81,6 +90,26 @@ namespace Xenia {
 
 // Serialization/Deserialization for Xenia::Instance and Xenia::JDK
 namespace nlohmann {
+    template<>
+    struct adl_serializer<Xenia::version> {
+        static void to_json(json &j, const Xenia::version&i) {
+            j = json{
+                {"id", i.id},
+                {"type", i.type},
+                {"url", i.url}
+            };
+        }
+        static void from_json(const json &j, Xenia::version &i) {
+            try {
+                i.id = j.at("id").get<std::string>();
+                i.type = j.at("type").get<std::string>();
+                i.url = j.at("url").get<std::string>();
+            }
+            catch (std::exception &e) {
+                std::cerr << e.what();
+            }
+        }
+    };
     template<>
     struct adl_serializer<Xenia::clientSettings> {
         static void to_json(json &j, const Xenia::clientSettings &i) {

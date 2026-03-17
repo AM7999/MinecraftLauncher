@@ -46,10 +46,11 @@ void Xenia::SettingsDialog(bool* w_open, Xenia::clientSettings* cs) {
     ImGui::End();
 }
 
-void Xenia::NewInstanceDialog(bool* w_open, std::vector<Xenia::Instance>* instances) {
+void Xenia::NewInstanceDialog(bool* w_open, std::vector<Xenia::Instance>* instances, std::vector<Xenia::version>* v) {
     if (!w_open || !*w_open)
         return;
-
+    
+    static int selectedIndex = 0;
     static char txtBuff[32] = "";
     static int instanceType = Xenia::ModLoader::NONE;
     static bool modded = false;
@@ -61,6 +62,7 @@ void Xenia::NewInstanceDialog(bool* w_open, std::vector<Xenia::Instance>* instan
 
         ImGui::Spacing();
         ImGui::InputText("Instance Name", txtBuff, sizeof(txtBuff));
+
 
         ImGui::Spacing();
         ImGui::Text("Instance Type:");

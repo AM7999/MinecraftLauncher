@@ -13,6 +13,7 @@
 #include "Logic.hpp"
 
 Application::Application() {
+
     if (SDL_Init(SDL_INIT_VIDEO)) {
         wnd = SDL_CreateWindow("Minecraft Launcher", 640, 480, 0);
         ren = SDL_CreateRenderer(wnd, "");
@@ -36,12 +37,20 @@ Application::Application() {
         m_showSettings = false;
         m_showNewInstance = false;
 
-        std::ifstream file("launcherSettings.json");
+        std::ifstream file;
         nlohmann::json j;
+        file.open("launcherSettings.json");
         file >> j;
         instances = j.at("instances").get<std::vector<Xenia::Instance>>();
         jdks = j.at("installedJdks").get<std::vector<Xenia::JDK>>();
         clientSettings = j.at("userSettings").get<Xenia::clientSettings>();
+        file.close();
+
+        nlohmann::json j2;
+        Logic::downloadFile("cache/", "https://launchermeta.mojang.com/mc/game/version_manifest.json");
+        file.open("cache/version_manifest.json");
+        file >> j2;
+        versions = j2.at("versions").get<std::vector<Xenia::version>>();
         file.close();
     }
     else {
@@ -108,7 +117,7 @@ void Application::draw() {
     }
 
     if(m_showNewInstance)
-        Xenia::NewInstanceDialog(&m_showNewInstance, &instances);
+        Xenia::NewInstanceDialog(&m_showNewInstance, &instances, &versions);
     if (m_showSettings)
         Xenia::SettingsDialog(&m_showSettings, &clientSettings);
 
@@ -128,8 +137,8 @@ void Application::draw() {
         if (ImGui::BeginPopup(("InstanceContext##" + std::to_string(i)).c_str())) {
             ImGui::Text("%s", instances[i].instanceName.c_str());
             ImGui::Separator();
-            if (ImGui::MenuItem("Launch")) { Xenia::Logic::launchInstance(instances[i]); }
-            if (ImGui::MenuItem("Modify")) { Xenia::Logic::modifyInstance(instances[i]); }
+            if (ImGui::MenuItem("Launch")) { /*Xenia::Logic::launchInstance(instances[i]);*/ }
+            if (ImGui::MenuItem("Modify")) { /*Xenia::Logic::modifyInstance(instances[i]);*/ }
             if (ImGui::MenuItem("Delete Instance")) { instances.erase(instances.begin() + i); }
             ImGui::EndPopup();
         }

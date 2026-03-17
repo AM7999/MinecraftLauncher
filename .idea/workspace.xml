@@ -33,7 +33,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="23a6ba0d-6ed4-4e0c-9962-a9a9bcf85506" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/cmake-multi-platform.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/cmake-multi-platform.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Dialogs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Dialogs.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Dialogs.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Dialogs.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Logic.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Logic.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Logic.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Logic.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Structs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Structs.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Window.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Window.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Window.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Window.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,12 +61,12 @@
     &quot;assignee&quot;: &quot;AM7999&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/AM7999/MinecraftLauncher.git&quot;,
-    &quot;accountId&quot;: &quot;103344cd-a767-44fd-879e-23bf59789020&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/AM7999/MinecraftLauncher.git",
+    "accountId": "ed1021b9-89b9-4acd-99c6-bf37c217ad2e"
   }
-}</component>
+}]]></component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/src/Main.cpp" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -130,6 +138,7 @@
       <option name="presentableId" value="Default" />
       <updated>1773541844995</updated>
       <workItem from="1773541847136" duration="4737000" />
+      <workItem from="1773629632905" duration="12000" />
     </task>
     <task id="LOCAL-00001" summary="Just wanna see if this breaks actions runs">
       <option name="closed" value="true" />
