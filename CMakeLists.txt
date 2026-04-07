@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.16...4.0)
 
-set(CMAKE_GENERATOR "Ninja" CACHE INTERNAL "" FORCE)
-
 project(MinecraftLauncher)
 
 find_package(CURL REQUIRED)
@@ -18,7 +16,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(imgui)
 
-add_library(imgui_lib STATIC
+add_library(imgui STATIC
     ${imgui_SOURCE_DIR}/imgui.cpp
     ${imgui_SOURCE_DIR}/imgui_draw.cpp
     ${imgui_SOURCE_DIR}/imgui_widgets.cpp
@@ -28,12 +26,12 @@ add_library(imgui_lib STATIC
     ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
 )
 
-target_include_directories(imgui_lib PUBLIC
+target_include_directories(imgui PUBLIC
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends
 )
 
-target_link_libraries(imgui_lib PUBLIC SDL3::SDL3)
+target_link_libraries(imgui PUBLIC SDL3::SDL3)
 
 add_executable(MinecraftLauncher WIN32
     src/Structs.h
@@ -44,6 +42,8 @@ add_executable(MinecraftLauncher WIN32
     src/Dialogs.cpp
     src/Logic.cpp
     src/Logic.hpp
+    src/Logger.cpp
+    src/Logger.hpp
 )
 
 set_target_properties(MinecraftLauncher PROPERTIES
@@ -54,7 +54,7 @@ set_target_properties(MinecraftLauncher PROPERTIES
 target_link_libraries(MinecraftLauncher
     PRIVATE
     SDL3::SDL3
-    imgui_lib
+    imgui
     OpenSSL::SSL
     CURL::libcurl
 )

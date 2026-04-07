@@ -3,6 +3,7 @@
 #include <imgui.h>
 
 #include "Structs.h"
+#include "Logic.hpp"
 
 void Xenia::SettingsDialog(bool* w_open, Xenia::clientSettings* cs) {
     if (!w_open || !*w_open)
@@ -49,36 +50,55 @@ void Xenia::SettingsDialog(bool* w_open, Xenia::clientSettings* cs) {
 void Xenia::NewInstanceDialog(bool* w_open, std::vector<Xenia::Instance>* instances, std::vector<Xenia::version>* v) {
     if (!w_open || !*w_open)
         return;
-    
+
     static int selectedIndex = 0;
     static char txtBuff[32] = "";
     static int instanceType = Xenia::ModLoader::NONE;
     static bool modded = false;
+    static int selectedVersionIndex = 0;
 
-    ImGui::SetNextWindowSize(ImVec2(300, 150), ImGuiCond_FirstUseEver);
+    if (!ImGui::IsPopupOpen("", ImGuiPopupFlags_AnyPopupId))
+        ImGui::SetNextWindowFocus();
+
+    ImGui::SetNextWindowSize(ImVec2(300, 220), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("New Instance", w_open)) {
-
-        ImGui::SetWindowFocus();
 
         ImGui::Spacing();
         ImGui::InputText("Instance Name", txtBuff, sizeof(txtBuff));
 
+        ImGui::Spacing();
+        if (v && !v->empty()) {
+            if (selectedVersionIndex >= static_cast<int>(v->size()))
+                selectedVersionIndex = 0;
 
+            const auto getter = [](void* data, int idx) -> const char* {
+                auto* versions = static_cast<std::vector<Xenia::version>*>(data);
+                return (*versions)[idx].id.c_str();
+            };
+            ImGui::Combo("Version", &selectedVersionIndex, getter, v, static_cast<int>(v->size()));
+        } else {
+            ImGui::TextDisabled("No versions available");
+        }
+
+        ImGui::BeginDisabled();
         ImGui::Spacing();
         ImGui::Text("Instance Type:");
         ImGui::Checkbox("Modded", &modded);
         ImGui::RadioButton("Neoforge", &instanceType, Xenia::ModLoader::NEOFORGE);
         ImGui::SameLine();
         ImGui::RadioButton("Forge", &instanceType, Xenia::ModLoader::FORGE);
+        ImGui::EndDisabled();
 
         ImGui::Spacing();
         ImGui::Separator();
 
-        bool canCreate = txtBuff[0] != '\0';
+        bool canCreate = txtBuff[0] != '\0' && v && !v->empty();
 
         if (!canCreate) ImGui::BeginDisabled();
         if (ImGui::Button("Create", ImVec2(80, 0))) {
-            instances->push_back({txtBuff, "1.21.1", 21, modded, Xenia::intToModloader(instanceType), "/path"});
+            const Xenia::version& selected = (*v)[selectedVersionIndex];
+            Logic::downloadMinecraft(selected, txtBuff);
+            instances->push_back({txtBuff, selected.id, 21, modded, Xenia::intToModloader(instanceType), txtBuff});
             txtBuff[0] = '\0';
             *w_open = false;
         }

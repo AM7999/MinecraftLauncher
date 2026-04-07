@@ -52,6 +52,8 @@ Application::Application() {
         file >> j2;
         versions = j2.at("versions").get<std::vector<Xenia::version>>();
         file.close();
+
+        //Logic::downloadMinecraft(versions[0], "test");
     }
     else {
         isRunning = false;
@@ -165,7 +167,7 @@ void Application::draw() {
         ImGui::Text("Path: %s",        inst.pathToInstance.c_str());
         if (inst.isModded)
             if(ImGui::Button("Open mod folder", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
-                std::system(("xdg-open" + inst.pathToInstance + "/mods").c_str());
+                std::system(("xdg-open " + inst.pathToInstance + "/mods").c_str());
             }
         if (ImGui::Button("Open Instance Folder", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
             std::system(("xdg-open " + inst.pathToInstance).c_str());
