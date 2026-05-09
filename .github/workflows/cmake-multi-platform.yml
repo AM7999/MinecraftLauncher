@@ -107,6 +107,9 @@ jobs:
           ./linuxdeploy-x86_64.AppImage --appimage-extract
           mv squashfs-root linuxdeploy
 
+          SDL3_LIB_DIR=$(dirname $(find /usr /opt /home -name "libSDL3.so*" -not -type d 2>/dev/null | head -1))
+          export LD_LIBRARY_PATH=$SDL3_LIB_DIR:$LD_LIBRARY_PATH
+
           mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
           mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
           cat > AppDir/usr/share/applications/MinecraftLauncher.desktop <<EOF
