@@ -97,32 +97,17 @@ jobs:
           mkdir build && cd build
           cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
           ninja -j $(nproc)
-          DESTDIR=${{github.workspace}}/AppDir ninja install
-      
+          DESTDIR=${{ github.workspace }}/AppDir ninja install
+
       - name: Build AppImage
         run: |
           wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           chmod +x linuxdeploy-x86_64.AppImage
-
           ./linuxdeploy-x86_64.AppImage --appimage-extract
           mv squashfs-root linuxdeploy
 
           SDL3_LIB_DIR=$(dirname $(find /usr /opt /home -name "libSDL3.so*" -not -type d 2>/dev/null | head -1))
           export LD_LIBRARY_PATH=$SDL3_LIB_DIR:$LD_LIBRARY_PATH
-
-          mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
-          mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
-          cat > AppDir/usr/share/applications/MinecraftLauncher.desktop <<EOF
-          [Desktop Entry]
-          Name=Minecraft Launcher
-          Exec=MinecraftLauncher
-          Icon=MinecraftLauncher
-          Type=Application
-          Categories=Game;
-          EOF
-
-          [ -f AppImage-Data/icon.png ] && cp AppImage-Data/icon.png AppDir/usr/share/icons/hicolor/256x256/apps/MinecraftLauncher.png \
-            || convert -size 256x256 xc:#4a7c59 AppDir/usr/share/icons/hicolor/256x256/apps/MinecraftLauncher.png
 
           ARCH=x86_64 ./linuxdeploy/AppRun \
             --appdir AppDir \
