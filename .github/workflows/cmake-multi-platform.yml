@@ -99,15 +99,6 @@ jobs:
           ninja -j $(nproc)
           DESTDIR=${{ github.workspace }}/AppDir ninja install
 
-      - name: Debug SDL3 location
-        run: |
-          echo "=== ldconfig ==="
-          ldconfig -p | grep -i sdl || echo "not in ldconfig"
-          echo "=== find / ==="
-          find / -name "libSDL3*" -not -path "*/proc/*" 2>/dev/null
-          echo "=== ldd on binary ==="
-          ldd ${{ github.workspace }}/AppDir/usr/bin/MinecraftLauncher | grep -i sdl
-
       - name: Build AppImage
         run: |
           wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
