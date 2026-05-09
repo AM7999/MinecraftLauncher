@@ -75,6 +75,10 @@ elseif(UNIX AND NOT APPLE)
         @ONLY
     )
 
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/MinecraftLauncher.desktop
+        DESTINATION share/applications
+    )
+
     install(FILES ${CMAKE_SOURCE_DIR}/AppImage-Data/icon.png
         DESTINATION share/icons/hicolor/256x256/apps
         RENAME MinecraftLauncher.png
