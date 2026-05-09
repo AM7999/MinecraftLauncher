@@ -1,4 +1,4 @@
-#include <imgui.h>: 
+#include <imgui.h> 
 #include <curl/curl.h>
 
 #include <fstream>
@@ -62,8 +62,6 @@ bool Logic::downloadMinecraft(const Xenia::version& v, const std::string& instan
     std::filesystem::path targetDir = std::filesystem::path("Instances") / instanceName;
     std::filesystem::create_directories(targetDir);
     Logic::downloadFile("Instances/" + instanceName + "/", j["downloads"]["client"]["url"]);
-
-    8
 
     return true;
 }

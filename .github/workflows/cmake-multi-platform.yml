@@ -95,13 +95,38 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           mkdir build && cd build
-          cmake .. -G Ninja
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
           ninja -j $(nproc)
+          DESTDIR=${{github.workspace}}/AppDir ninja install
+      
+      - name: Build AppImage
+        run: |
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          chmod +x linuxdeploy-x86-64.AppImage
+
+          ./linuxdeploy-x86-64.AppImage --appimage-extract
+          mv squashfs-root linuxdeploy
+
+          mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
+          mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
+          cat > AppDir/usr/share/applications/MinecraftLauncher.desktop <<EOF
+          [Desktop Entry]
+          Name=Minecraft Launcher
+          Exec=MinecraftLauncher
+          Icon=MinecraftLauncher
+          Type=Application
+          Categories=Game;
+          EOF
+
+          [ -f AppImage-Data/icon.png ] && cp AppImage-Data/icon.png AppDir/usr/share/icons/hicolor/256x256/apps/MinecraftLauncher.png \
+            || convert -size 256x256 xc:#4a7c59 AppDir/usr/share/icons/hicolor/256x256/apps/MinecraftLauncher.png
+
+          ARCH=x86_64 ./linuxdeploy/AppRun \
+            --appdir AppDir \
+            --output appimage
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: MinecraftLauncher_Linux-x86_64
-          path: | 
-            build/MinecraftLauncher
-            build/SDL3.so
+          path: MinecraftLauncher-x86_64.AppImage
