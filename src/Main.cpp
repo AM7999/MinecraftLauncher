@@ -1,11 +1,6 @@
 #include <iostream>
 #include <fstream>
-
-#include <cstdlib>
-
 #include <SDL3/SDL_messagebox.h>
-
-#include "Structs.h"
 #include "Window.hpp"
 
 using nlohmann::json;

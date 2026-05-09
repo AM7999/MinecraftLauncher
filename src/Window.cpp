@@ -47,7 +47,10 @@ Application::Application() {
         file.close();
 
         nlohmann::json j2;
-        Logic::downloadFile("cache/", "https://launchermeta.mojang.com/mc/game/version_manifest.json");
+        
+        if(!std::filesystem::exists("cache/version_manifest.json")) {
+            Logic::downloadFile("cache/", "https://launchermeta.mojang.com/mc/game/version_manifest.json");
+        }
         file.open("cache/version_manifest.json");
         file >> j2;
         versions = j2.at("versions").get<std::vector<Xenia::version>>();
