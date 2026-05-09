@@ -63,8 +63,22 @@ if(WIN32)
     target_link_options(MinecraftLauncher PRIVATE -static -static-libgcc -static-libstdc++)
 elseif(APPLE)
 
-elseif(UNIX)
+elseif(UNIX AND NOT APPLE)
     target_link_options(MinecraftLauncher PRIVATE -static-libgcc -static-libstdc++)
+    install(TARGETS MinecraftLauncher
+        RUNTIME DESTINATION bin
+    )
+
+    configure_file(
+        ${CMAKE_SOURCE_DIR}/AppImage-Data/MinecraftLauncher.desktop.in
+        ${CMAKE_CURRENT_BINARY_DIR}/MinecraftLauncher.desktop
+        @ONLY
+    )
+
+    install(FILES ${CMAKE_SOURCE_DIR}/AppImage-Data/icon.png
+        DESTINATION share/icons/hicolor/256x256/apps
+        RENAME MinecraftLauncher.png
+    )
 endif()
 
 if(WIN32)

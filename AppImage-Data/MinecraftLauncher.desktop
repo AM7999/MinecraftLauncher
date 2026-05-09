@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Minecraft Launcher
+Exec=MinecraftLauncher
+Icon=MinecraftLauncher
+Type=Application
+Categories=Game;
+Comment=A Minecraft Launcher
