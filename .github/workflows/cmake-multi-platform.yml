@@ -106,8 +106,13 @@ jobs:
           ./linuxdeploy-x86_64.AppImage --appimage-extract
           mv squashfs-root linuxdeploy
 
-          SDL3_LIB_DIR=$(dirname $(find /usr /opt /home -name "libSDL3.so*" -not -type d 2>/dev/null | head -1))
-          export LD_LIBRARY_PATH=$SDL3_LIB_DIR:$LD_LIBRARY_PATH
+          # Locate libSDL3 via ldconfig, fall back to a manual search
+          SDL3_LIB=$(ldconfig -p | grep "libSDL3.so" | awk '{print $NF}' | head -1)
+          if [ -z "$SDL3_LIB" ]; then
+            SDL3_LIB=$(find /usr/local/lib /usr/lib -name "libSDL3.so*" -not -type d 2>/dev/null | head -1)
+          fi
+          echo "Found SDL3 at: $SDL3_LIB"
+          export LD_LIBRARY_PATH=$(dirname $SDL3_LIB):$LD_LIBRARY_PATH
 
           ARCH=x86_64 ./linuxdeploy/AppRun \
             --appdir AppDir \
