@@ -118,4 +118,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MinecraftLauncher_Linux-x86_64
-          path: MinecraftLauncher-x86_64.AppImage
+          path: Minecraft_Launcher-x86_64.AppImage
