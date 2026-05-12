@@ -1,6 +1,7 @@
 #include "Dialogs.hpp"
 
 #include <imgui.h>
+#include <future>
 
 #include "Structs.h"
 #include "Logic.hpp"
@@ -97,7 +98,7 @@ void Xenia::NewInstanceDialog(bool* w_open, std::vector<Xenia::Instance>* instan
         if (!canCreate) ImGui::BeginDisabled();
         if (ImGui::Button("Create", ImVec2(80, 0))) {
             const Xenia::version& selected = (*v)[selectedVersionIndex];
-            Logic::downloadMinecraft(selected, txtBuff);
+            std::future<bool> result = std::async(std::launch::async, Logic::downloadMinecraft, selected, txtBuff); //Logic::downloadMinecraft(selected, txtBuff);
             instances->push_back({txtBuff, selected.id, 21, modded, Xenia::intToModloader(instanceType), txtBuff});
             txtBuff[0] = '\0';
             *w_open = false;

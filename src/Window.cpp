@@ -49,14 +49,16 @@ Application::Application() {
         nlohmann::json j2;
         
         if(!std::filesystem::exists("cache/version_manifest.json")) {
-            Logic::downloadFile("cache/", "https://launchermeta.mojang.com/mc/game/version_manifest.json");
+            if(!Logic::downloadFile("cache/", "https://launchermeta.mojang.com/mc/game/version_manifest.json")) {
+                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Information", "Failed to download Version Manifest.", NULL);
+            }
+                
+        } else {
+            file.open("cache/version_manifest.json");
+            file >> j2;
+            versions = j2.at("versions").get<std::vector<Xenia::version>>();
+            file.close();
         }
-        file.open("cache/version_manifest.json");
-        file >> j2;
-        versions = j2.at("versions").get<std::vector<Xenia::version>>();
-        file.close();
-
-        //Logic::downloadMinecraft(versions[0], "test");
     }
     else {
         isRunning = false;

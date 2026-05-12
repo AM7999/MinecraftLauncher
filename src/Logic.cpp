@@ -6,6 +6,8 @@
 #include <mutex>
 #include <semaphore>
 
+#include <cstdlib>
+
 #include "Logic.hpp"
 #include "Logger.hpp"
 
@@ -62,6 +64,9 @@ bool Logic::downloadMinecraft(const Xenia::version& v, const std::string& instan
     std::filesystem::path targetDir = std::filesystem::path("Instances") / instanceName;
     std::filesystem::create_directories(targetDir);
     Logic::downloadFile("Instances/" + instanceName + "/", j["downloads"]["client"]["url"]);
+
+    //std::filesystem::path
+
 
     return true;
 }
