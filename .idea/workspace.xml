@@ -34,10 +34,7 @@
   <component name="ChangeListManager">
     <list default="true" id="23a6ba0d-6ed4-4e0c-9962-a9a9bcf85506" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Dialogs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Dialogs.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Logic.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Logic.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Logic.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Logic.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Window.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Window.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -142,6 +139,9 @@
       <workItem from="1775503859898" duration="1697000" />
       <workItem from="1775505831673" duration="805000" />
       <workItem from="1775513363283" duration="78000" />
+      <workItem from="1778680326338" duration="2037000" />
+      <workItem from="1778682403891" duration="2000" />
+      <workItem from="1778684244351" duration="10000" />
     </task>
     <task id="LOCAL-00001" summary="Just wanna see if this breaks actions runs">
       <option name="closed" value="true" />

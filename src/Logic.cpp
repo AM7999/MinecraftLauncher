@@ -37,6 +37,7 @@ bool Logic::downloadFile(const std::string &directory, const std::string &url) {
     curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "Minecraft Offline Launcher");
     curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, NULL);
+    curl_easy_setopt(curl_handle, CURLOPT_TIMEOUT, 30);
     curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, pagefile);
 
     CURLcode res = curl_easy_perform(curl_handle);

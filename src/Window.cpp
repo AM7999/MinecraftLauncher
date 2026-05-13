@@ -50,14 +50,19 @@ Application::Application() {
         
         if(!std::filesystem::exists("cache/version_manifest.json")) {
             if(!Logic::downloadFile("cache/", "https://launchermeta.mojang.com/mc/game/version_manifest.json")) {
-                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Information", "Failed to download Version Manifest.", NULL);
+                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "[Error]", "Failed to download Version Manifest.", NULL);
             }
-                
-        } else {
-            file.open("cache/version_manifest.json");
-            file >> j2;
+        }
+        try {
+            std::ifstream file("cache/version_manifest.json");
+            if (!file.is_open())
+                throw std::runtime_error("Could not open version manifest.");
+
+            nlohmann::json j2 = nlohmann::json::parse(file);
             versions = j2.at("versions").get<std::vector<Xenia::version>>();
-            file.close();
+        }
+        catch (const std::exception& e) {
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", e.what(), nullptr);
         }
     }
     else {
@@ -146,7 +151,10 @@ void Application::draw() {
             ImGui::Separator();
             if (ImGui::MenuItem("Launch")) { /*Xenia::Logic::launchInstance(instances[i]);*/ }
             if (ImGui::MenuItem("Modify")) { /*Xenia::Logic::modifyInstance(instances[i]);*/ }
-            if (ImGui::MenuItem("Delete Instance")) { instances.erase(instances.begin() + i); }
+            if (ImGui::MenuItem("Delete Instance")) {
+                std::filesystem::remove_all("Instances/" + instances[i].instanceName);
+                instances.erase(instances.begin() + i);
+            }
             ImGui::EndPopup();
         }
     }
