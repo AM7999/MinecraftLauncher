@@ -65,5 +65,3 @@ bool Logic::downloadMinecraft(const Xenia::version& v, const std::string& instan
 
     return true;
 }
-
-// Limit concurrent downloads
