@@ -6,6 +6,8 @@
 #include <mutex>
 #include <semaphore>
 
+#include <cstdlib>
+
 #include "Logic.hpp"
 #include "Logger.hpp"
 
@@ -35,6 +37,7 @@ bool Logic::downloadFile(const std::string &directory, const std::string &url) {
     curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "Minecraft Offline Launcher");
     curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, NULL);
+    curl_easy_setopt(curl_handle, CURLOPT_TIMEOUT, 30);
     curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, pagefile);
 
     CURLcode res = curl_easy_perform(curl_handle);
@@ -62,6 +65,9 @@ bool Logic::downloadMinecraft(const Xenia::version& v, const std::string& instan
     std::filesystem::path targetDir = std::filesystem::path("Instances") / instanceName;
     std::filesystem::create_directories(targetDir);
     Logic::downloadFile("Instances/" + instanceName + "/", j["downloads"]["client"]["url"]);
+
+    //std::filesystem::path
+
 
     return true;
 }
