@@ -12,7 +12,6 @@ Uint32 frameStart;
 int frameTime;
 
 int main(int argc, char *argv[]) {
-
     if (!std::filesystem::exists("launcherSettings.json")) {
         std::ofstream outFile("launcherSettings.json");
 

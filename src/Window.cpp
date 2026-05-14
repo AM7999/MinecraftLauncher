@@ -50,7 +50,7 @@ Application::Application() {
         
         if(!std::filesystem::exists("cache/version_manifest.json")) {
             if(!Logic::downloadFile("cache/", "https://launchermeta.mojang.com/mc/game/version_manifest.json")) {
-                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "[Error]", "Failed to download Version Manifest.", NULL);
+                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Failed to download Version Manifest.", NULL);
             }
         }
         try {

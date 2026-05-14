@@ -88,6 +88,10 @@ void Xenia::NewInstanceDialog(bool* w_open, std::vector<Xenia::Instance>* instan
         ImGui::RadioButton("Neoforge", &instanceType, Xenia::ModLoader::NEOFORGE);
         ImGui::SameLine();
         ImGui::RadioButton("Forge", &instanceType, Xenia::ModLoader::FORGE);
+        ImGui::SameLine();
+        ImGui::RadioButton("Fabric", &instanceType, Xenia::ModLoader::FABRIC);
+        ImGui::SameLine();
+        ImGui::RadioButton("Quilt", &instanceType, Xenia::ModLoader::QUILT);
         ImGui::EndDisabled();
 
         ImGui::Spacing();
@@ -98,10 +102,10 @@ void Xenia::NewInstanceDialog(bool* w_open, std::vector<Xenia::Instance>* instan
         if (!canCreate) ImGui::BeginDisabled();
         if (ImGui::Button("Create", ImVec2(80, 0))) {
             const Xenia::version& selected = (*v)[selectedVersionIndex];
-            std::future<bool> result = std::async(std::launch::async, Logic::downloadMinecraft, selected, txtBuff); //Logic::downloadMinecraft(selected, txtBuff);
+            Logic::downloadMinecraft(selected, txtBuff); //Logic::downloadMinecraft(selected, txtBuff);
             instances->push_back({txtBuff, selected.id, 21, modded, Xenia::intToModloader(instanceType), txtBuff});
-            txtBuff[0] = '\0';
             *w_open = false;
+            txtBuff[0] = '\0';
         }
         if (!canCreate) ImGui::EndDisabled();
 

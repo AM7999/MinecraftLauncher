@@ -2,9 +2,6 @@
 #include <curl/curl.h>
 
 #include <fstream>
-#include <future>
-#include <mutex>
-#include <semaphore>
 
 #include <cstdlib>
 
@@ -64,9 +61,9 @@ bool Logic::downloadMinecraft(const Xenia::version& v, const std::string& instan
 
     std::filesystem::path targetDir = std::filesystem::path("Instances") / instanceName;
     std::filesystem::create_directories(targetDir);
-    Logic::downloadFile("Instances/" + instanceName + "/", j["downloads"]["client"]["url"]);
 
-    //std::filesystem::path
+    Logic::downloadFile("Instances/" + instanceName + "/", j["downloads"]["client"]["url"]);
+    //Logic::downloadFile("Instances/" + instanceName + "/assets/indexes/", j["jl;k"]);
 
 
     return true;
