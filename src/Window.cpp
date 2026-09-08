@@ -10,6 +10,7 @@
 #include <imgui_impl_sdlrenderer3.h>
 
 #include "Dialogs.hpp"
+#include "Logger.hpp"
 #include "Logic.hpp"
 
 Application::Application() {
@@ -17,8 +18,12 @@ Application::Application() {
     if (SDL_Init(SDL_INIT_VIDEO)) {
         wnd = SDL_CreateWindow("Minecraft Launcher", 640, 480, 0);
         ren = SDL_CreateRenderer(wnd, "");
-        if (!ren || !wnd)
-            std::cerr << "Something broke: " << SDL_GetError() << std::endl;
+        if (!ren || !wnd) {
+            Xenia::logError("Critical Error!: " + std::string(SDL_GetError()), 1);
+            SDL_Quit();
+            return;
+        }
+
 
         SDL_SetWindowResizable(wnd, false);
         SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);

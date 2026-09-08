@@ -1,12 +1,15 @@
 #include "Logger.hpp"
 
-#include <SDL3/SDL_timer.h>
 #include <iostream>
 #include <ctime>
-#include <stdexcept>
 #include <chrono>
 #include <iomanip>
 #include <sstream>
+
+#define WHITE "\x1b[0;38;2;255;255;255;49m"
+#define GREEN "\x1b[0;38;2;28;220;154;49m"
+#define ORANGE "\x1b[0;38;2;225;85;0;49m"
+#define RED "\x1b[0;38;2;255;0;0;49m"
 
 namespace Xenia {
     static std::string current_time_hms() {
@@ -20,18 +23,16 @@ namespace Xenia {
     }
 
     void logMessage(std::string message) {
-        std::cout << "(" << current_time_hms() << ") [LOG]: " << message << "\n";
+        std::cout << WHITE << "(" << current_time_hms() << ")" << GREEN << "[LOG]: " << WHITE << message << "\n";
     }
     void logWarning(std::string message) {
-        std::cout << "(" << current_time_hms() << ") [WARN]: " << message << "\n";
+        std::cout << WHITE << "(" << current_time_hms() << ")" << ORANGE <<  "[WARN]: " << WHITE << message << "\n";
     }
     void logError(std::string message, int eType) {
         if(eType == 1) {
-            std::cout << "(" << current_time_hms() << ") [CRIT]: " << message << "\n";
-            SDL_Delay(300);
-            throw std::runtime_error(message);
+            std::cout << WHITE << "(" << current_time_hms() << ")" << RED << "[CRIT]: " << RED << message << "\n";
         } else if(eType == 0) {
-            std::cout << "(" << current_time_hms() << ") [ERR]: " << message << "\n";
+            std::cout << WHITE << "(" << current_time_hms() << ")" << RED << "[ERR]: " << WHITE << message << "\n";
         }
     }
 }

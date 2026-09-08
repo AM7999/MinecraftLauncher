@@ -1,9 +1,10 @@
-#include <imgui.h> 
+#include <imgui.h>
 #include <curl/curl.h>
 
 #include <fstream>
 
 #include <cstdlib>
+#include <future>
 
 #include "Logic.hpp"
 #include "Logger.hpp"
@@ -27,7 +28,7 @@ bool Logic::downloadFile(const std::string &directory, const std::string &url) {
     const char* fileOut = filepath.c_str();
     CURL *curl_handle = curl_easy_init();
     FILE *pagefile = fopen(fileOut, "wb");
-    if(!pagefile) { curl_easy_cleanup(curl_handle); return false;}
+    if(!pagefile) { curl_easy_cleanup(curl_handle); return false; }
 
     // at least its "easy"
     curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
@@ -51,20 +52,35 @@ bool Logic::downloadFile(const std::string &directory, const std::string &url) {
 }
 
 bool Logic::downloadMinecraft(const Xenia::version& v, const std::string& instanceName) {
+    // download version json
     Logic::downloadFile("cache/", v.url);
-
     std::ifstream version;
     nlohmann::json j;
-
+    const std::string ASSET_URL = "https://resources.download.minecraft.net/";
     version.open("cache/" + stripFilename(v.url));
     version >> j;
+    version.close();
 
     std::filesystem::path targetDir = std::filesystem::path("Instances") / instanceName;
     std::filesystem::create_directories(targetDir);
 
-    Logic::downloadFile("Instances/" + instanceName + "/", j["downloads"]["client"]["url"]);
-    //Logic::downloadFile("Instances/" + instanceName + "/assets/indexes/", j["jl;k"]);
-
-
     return true;
+}
+
+std::string Logic::getOperatingSystem() {
+    #ifdef _WIN32
+        return "win32";
+    #elif _WIN64
+        return "win64";
+    #elif __APPLE_ || __MACH__
+        return "macOS"
+    #elif __linux__
+        return "linux";
+    #elif __FreeBSD__
+        return "freebsd";
+    #elif __unix || __unix__
+        rturn "unix";
+    #else
+        return "other"
+    #endif
 }

@@ -1,12 +1,15 @@
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include <SDL3/SDL_messagebox.h>
+
+#include "Logger.hpp"
 #include "Window.hpp"
 
 using nlohmann::json;
 
-constexpr int targetFps = 60;
-constexpr int frameDelay = 1000/targetFps;
+constexpr double targetFps = 60;
+constexpr double frameDelay = 1000/targetFps;
 
 Uint32 frameStart;
 int frameTime;
@@ -37,24 +40,34 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    if (!std::filesystem::exists("cache")) { std::filesystem::create_directory("cache"); }
-    if (!std::filesystem::exists("Instances")) { std::filesystem::create_directory("Instances"); }
+    if (!std::filesystem::exists("cache")) {
+        try {
+            std::filesystem::create_directory("cache");
+        } catch (std::filesystem::filesystem_error &e) {
+            Xenia::logError(std::string(e.what()), 1);
+        }
+    }
+    if (!std::filesystem::exists("Instances")) {
+        try {
+            std::filesystem::create_directory("Instances");
+        } catch (std::filesystem::filesystem_error &e) {
+            Xenia::logError(std::string(e.what()), 1);
+        }
+    }
 
-    Application* a = new Application();
+    auto a = Application();
 
-    while (a->getIsRunning()) {
+    while (a.getIsRunning()) {
         frameStart = SDL_GetTicks();
 
-        a->handleEvents();
-        a->draw();
+        a.handleEvents();
+        a.draw();
 
         frameTime = SDL_GetTicks() - frameStart;
 
         if(frameDelay > frameTime)
             SDL_Delay(frameDelay - frameTime);
     }
-
-    delete a;
 
     return 0;
 }

@@ -1,7 +1,6 @@
 #include "Dialogs.hpp"
 
 #include <imgui.h>
-#include <future>
 
 #include "Structs.h"
 #include "Logic.hpp"

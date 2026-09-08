@@ -8,16 +8,17 @@ on:
   workflow_dispatch:
 
 jobs:
+
   mac-intel-build:
     runs-on: macos-15-intel
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Install Dependencies
         run: |
           brew install curl nlohmann-json sdl3
-      
+
       - name: Build Project
         run: |
           cmake -B build
@@ -57,7 +58,7 @@ jobs:
       - name: Configure Project
         run: |
           cmake -B build -G Ninja -DCMAKE_PREFIX_PATH=/mingw64
-      
+
       - name: Build Project
         run: cmake --build build
 
@@ -68,7 +69,7 @@ jobs:
           path: |
             build/MinecraftLauncher.exe
             build/SDL3.dll
-      
+
   linux-build:
     runs-on: ubuntu-latest
     steps:

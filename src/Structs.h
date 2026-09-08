@@ -14,6 +14,7 @@ namespace Xenia {
         NEOFORGE
     };
 
+    // enum conversions
     inline Xenia::ModLoader intToModloader(const int ml) {
         switch(ml) {
             case Xenia::ModLoader::NONE:
@@ -110,6 +111,7 @@ namespace nlohmann {
             }
         }
     };
+    // never have i ever wanted to bash my head in at cxx syntax
     template<>
     struct adl_serializer<Xenia::clientSettings> {
         static void to_json(json &j, const Xenia::clientSettings &i) {
