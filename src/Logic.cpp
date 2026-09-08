@@ -73,7 +73,7 @@ std::string Logic::getOperatingSystem() {
     #elif _WIN64
         return "win64";
     #elif __APPLE_ || __MACH__
-        return "macOS"
+        return "macOS";
     #elif __linux__
         return "linux";
     #elif __FreeBSD__
@@ -81,6 +81,6 @@ std::string Logic::getOperatingSystem() {
     #elif __unix || __unix__
         rturn "unix";
     #else
-        return "other"
+        return "other";
     #endif
 }
